@@ -42,7 +42,7 @@ VLAN ports during a maintenance window because the complete MST database gets re
 for any incremental change (such as adding new VLANs to instances or moving VLANs across
 instances)
 
-###Enabling MSTP
+### Enabling MSTP
 
 Configure MSTP
 ```
