@@ -71,5 +71,79 @@ SWICTH1(config)# interface fastethernet 0/0
 SWICTH1(config-if)# spanning-tree mst 1 cost 1234567
 SWICTH1(config-if)# spanning-tree mst 1 port-priority 240
 ```
+```
+SWITCH1(config)# interface Ethernet 0/2
+SWITCH1(config-if)# spanning-tree vlan 1 cost 16
+```
 references https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/12-2/25ew/configuration/guide/conf/mst.pdf
 
+## PVSTP
+note : normally PVST+ is default STP for cisco switch and already configured from the start
+### Enabling PVST+
+Configure PVST+
+```
+SWICTH1# Configure Terminal
+SWITCH1(config)# spanning-tree mode pvst
+SWITCH1(config)# spanning-tree vlan 1,10
+```
+Configure PVST+ Instance Prameters
+```
+SWITCH1(config)# spanning-tree vlan 1 priority 23456
+SWITCH1(config)# spanning-tree vlan 1 root primary
+SWITCH1(config)# spanning-tree vlan 10 root secondary
+```
+Configure per Port Prameters
+```
+SWICTH1(config)# interface fastethernet 0/0
+SWICTH1(config-if)# spanning-tree cost 1234567
+SWICTH1(config-if)# spanning-tree port-priority 240
+```
+## Rapid-PVSTP
+Configure Papid-PVSTP
+```
+SWICTH1# Configure Terminal
+SWITCH1(config)# spanning-tree mode rapid-pvst
+```
+Configure Rapid-PVSTP Instance Prameters
+```
+SWITCH1(config)# spanning-tree vlan 1 priority 23456
+SWITCH1(config)# spanning-tree vlan 1 root primary
+SWITCH1(config)# spanning-tree vlan 10 root secondary
+```
+Configure per Port Prameters
+```
+SWICTH1(config)# interface fastethernet 0/0
+SWICTH1(config-if)# spanning-tree cost 1234567
+SWICTH1(config-if)# spanning-tree port-priority 240
+```
+```
+SWITCH1(config)# interface Ethernet 0/2
+SWITCH1(config-if)# spanning-tree vlan 1 cost 16
+```
+
+## Other Additional Commands
+```
+SWICTH1(config)# spanning-tree hello-time <seconds>
+SWICTH1(config)# spanning-tree forward-time <seconds>
+SWICTH1(config)# spanning-tree max-age <seconds>
+```
+in MSTP is it quite different
+```
+SWICTH1(config)# spanning-tree mst hello-time <seconds>
+SWICTH1(config)# spanning-tree mst forward-time <seconds>
+SWICTH1(config)# spanning-tree mst max-age <seconds>
+```
+```
+SWICTH1(config)# interface ethernet 0/1
+SWICTH1(config-if)# spanning-tree link-type point-to-point
+```
+PortFast and BPDU Guard
+```
+SWICTH1(config)# interface FastEthernet0/1
+SWITCH1(config-if)# spanning-tree portfast
+SWITCH1(config-if)# spanning-tree bpduguard enable
+```
+```
+SWITCH1(config)# spanning-tree portfast bpduguard default
+SWITCH1(config)# spanning-tree portfast default
+````
