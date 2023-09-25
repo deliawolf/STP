@@ -1,1 +1,75 @@
-# STP, RSTP, MSTP
+# MSTP, PVSTP, Rapid-PVSTP
+
+## Spanning Tree Protocol Overview
+
+STP provides loop resolution by managing the physical paths to given network segments. STP allows physical path redundancy while preventing the undesirable effects of active loops in the network. STP forces certain ports into a blocking state. These blocking ports do not forward data frames.
+
+STP performing 3 step
+
+1. Elects one root bridge: Only one bridge can act as the root bridge. The root bridge is the reference point, and all data flows in the network are from the perspective of this switch. All ports on a root bridge are forwarding traffic.
+2. Selects the root port on the nonroot bridge: One port on each nonroot bridge is the root port. It is the port with the lowest-cost path from the nonroot bridge to the root bridge. By default, the STP path cost is calculated from the bandwidth of the link. You can also set the STP path cost manually.
+3. Selects the designated port on each segment. There is one designated port on each segment. It is selected on the bridge with the lowest-cost path to the root bridge.
+
+| Port Rule | Description |
+| ------------- | ------------- |
+| Root Port  | This port exists on nonroot bridges and is the switch port with the best path to the root bridge. Root ports forward traffic toward the root bridge. The source MAC address of the frames that are received on the root port that is capable of populating the MAC table. Only one root port is allowed per bridge. |
+| Designated Port  | This port exists on root and nonroot bridges. For root bridges, all switch ports are designated ports. For nonroot bridges, a designated port is the switch port that will receive and forward frames toward the root bridge as needed. Only one designated port is allowed per segment. If multiple switches exist on the same segment, an election process determines the designated switch, and the corresponding switch port begins forwarding frames for the segment. Designated ports are capable of populating the MAC table.  |
+| NonDesignated Port  | The nondesignated port is a switch port that is not forwarding (blocking) data frames and is not populating the MAC address table with the source addresses of frames that are seen on that segment.  |
+| Disabled Port  | The disabled port is a switch port that is shut down.  |
+
+## Spanning Tree Protocol Types and Features
+
+| Protocol  | Standard | Convergence | Number of Trees |
+| ------------- | ------------- | ------------| --------------- |
+| STP  | 802.1D  | Slow  | One  |
+| PVST+  | Cisco  | Slow  | One for every VLAN  |
+| RSTP  | 802.1w  | Fast  | One  |
+| Rapid PVST+  | Cisco  | Fast  | One for every VLAN  |
+| MSTP  | 802.1s Cisco  | Fast  | One for mnultiple VLAN  |
+
+## MSTP
+
+### MSTP Guideline
+Follow these restrictions and guidelines to avoid configuration problems:
+1. Do not disable spanning tree on any VLAN in any of the PVST bridges.
+2. Do no use PVST bridges as the root of CST.
+3. Do not connect switches with access links, because access links may partition a VLAN.
+4. Ensure that all PVST root bridges have lower (numerically higher) priority than the CST root bridge.
+5. Ensure that trunks carry all of the VLANs mapped to an instance or do not carry any VLANs at all
+for this instance.
+6. Complete any MST configuration that incorporates a large number of either existing or new logical
+VLAN ports during a maintenance window because the complete MST database gets reinitialized
+for any incremental change (such as adding new VLANs to instances or moving VLANs across
+instances)
+
+###Enabling MSTP
+
+Configure MSTP
+```
+SWICTH1# Configure Terminal
+SWITCH1(config)# spanning-tree mode mst
+SWITCH1(config)# spanning-tree mst configuration
+SWICTH1(config-mst)# name cisco
+SWICTH1(config-mst)# revision 1
+SWICTH1(config-mst)# instance 1 vlan 1
+SWICTH1(config-mst)# instance 2 vlan 10-100
+SWICTH1(config-mst)# show pending
+SWICTH1(config-mst)# end
+SWICTH1# show spanning-tree mst configuration
+```
+Configure MSTP Instance Parameters
+```
+SWICTH1(config)# spanning-tree mst 1 priority 49152
+```
+```
+SWICTH1(config)# spanning-tree mst 1 root primary
+SWICTH1(config)# spanning-tree mst 2 root secondary
+```
+Configure MST Instance Port Parameters
+```
+SWICTH1(config)# interface fastethernet 0/0
+SWICTH1(config-if)# spanning-tree mst 1 cost 1234567
+SWICTH1(config-if)# spanning-tree mst 1 port-priority 240
+```
+references https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/12-2/25ew/configuration/guide/conf/mst.pdf
+
