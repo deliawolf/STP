@@ -137,7 +137,7 @@ SWICTH1(config)# spanning-tree mst max-age <seconds>
 SWICTH1(config)# interface ethernet 0/1
 SWICTH1(config-if)# spanning-tree link-type point-to-point
 ```
-PortFast and BPDU Guard
+PortFast and BPDU Guard and loppguard
 ```
 SWICTH1(config)# interface FastEthernet0/1
 SWITCH1(config-if)# spanning-tree portfast
@@ -147,3 +147,20 @@ SWITCH1(config-if)# spanning-tree bpduguard enable
 SWITCH1(config)# spanning-tree portfast bpduguard default
 SWITCH1(config)# spanning-tree portfast default
 ````
+```
+Switch(config)# spanning-tree loopguard [default | interface interface-id]
+```
+To enable Loop Guard globally for all ports, use the "spanning-tree loopguard default" command.
+To enable Loop Guard on a specific interface, use the "spanning-tree loopguard interface interface-id" command.
+
+## BEST PRACTICE
+
+
+1. Use Rapid Spanning Tree Protocol (RSTP): RSTP is an improvement over the original STP and provides faster convergence times. It is recommended to use RSTP (802.1w) or its Cisco proprietary equivalent, Per-VLAN Rapid Spanning Tree (PVRST), to minimize the impact of topology changes and ensure quicker network recovery.
+2. Enable PortFast: PortFast allows access ports to transition immediately to the forwarding state, bypassing the listening and learning states. It is used on ports connected to end devices to speed up their connectivity and avoid unnecessary STP delays. However, do not enable PortFast on ports that connect to other switches or network devices.
+3. Implement BPDU Guard: BPDU Guard protects against accidental or unauthorized connections of switches or bridges to PortFast-enabled ports. When a BPDU (Bridge Protocol Data Unit) is received on a PortFast-enabled port, the port is immediately put into the errdisable state to prevent the creation of STP loops.
+4. Use EtherChannel: Utilize EtherChannel or Link Aggregation to bundle multiple physical links between switches into a single logical link. This provides higher bandwidth and redundancy while preventing STP from blocking redundant links. Use protocols like Port Aggregation Protocol (PAgP) or Link Aggregation Control Protocol (LACP) to negotiate the formation of the EtherChannel.
+5. Configure Root Bridge Placement: Designate the root bridge placement strategically to optimize the STP topology. Place the root bridge at the center of the network or in the core layer to minimize the diameter of the STP tree and ensure efficient traffic flow.
+6. Implement Loop Guard: Loop Guard helps prevent the formation of unidirectional link failures and protects against the creation of temporary bridging loops. Enable Loop Guard on ports that should be designated as designated ports, but stop receiving BPDUs.
+7. Monitor and Troubleshoot: Regularly monitor STP operation, convergence times, and logs to identify and resolve any potential issues. Utilize commands like show spanning-tree, debug spanning-tree, and network monitoring tools to gain visibility into STP operation and performance.
+
